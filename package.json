@@ -1,0 +1,22 @@
+{
+  "name": "aichat",
+  "version": "1.0.0",
+  "description": "simple ai chat",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "ai",
+    "chat"
+  ],
+  "author": "yugasun",
+  "license": "MIT",
+  "dependencies": {
+    "apiai": "^4.0.3",
+    "express": "^4.15.4",
+    "request": "^2.81.0",
+    "request-promise": "^4.2.1",
+    "socket.io": "^2.0.3"
+  }
+}
