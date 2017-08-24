@@ -434,6 +434,10 @@ inherits@2.0.3:
   version "2.0.3"
   resolved "http://r.cnpmjs.org/inherits/download/inherits-2.0.3.tgz#633c2c83e3da42a502f52466022480f4208261de"
 
+ionicons@2.0.1:
+  version "2.0.1"
+  resolved "http://r.cnpmjs.org/ionicons/download/ionicons-2.0.1.tgz#ca398113293ea870244f538f0aabbd4b5b209a3e"
+
 is-generator-function@^1.0.3:
   version "1.0.6"
   resolved "http://r.cnpmjs.org/is-generator-function/download/is-generator-function-1.0.6.tgz#9e71653cd15fff341c79c4151460a131d31e9fc4"
@@ -543,10 +547,6 @@ koa-socket@^4.4.0:
   dependencies:
     koa-compose "3.1.0"
     socket.io "1.4.5"
-
-koa-sslify@^2.1.2:
-  version "2.1.2"
-  resolved "http://r.cnpmjs.org/koa-sslify/download/koa-sslify-2.1.2.tgz#8947fd53949d69d539607814097863c1ecf38f30"
 
 koa-static@^4.0.1:
   version "4.0.1"

@@ -77,15 +77,19 @@ button:focus {
   outline: 0;
 }
 
-.fa {
-  display: inline-block;
-  font: normal normal normal 14px/1 FontAwesome;
-  font-size: 1.3em;
-  text-rendering: auto;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  margin-left: 10px;
+button i {
+  font-size: 124px;
 }
-.fa-github::before {
-    content: "\f09b";
+
+.ion-radio-waves:before{
+  animation: scaleInOut 2s 0s ease-in-out infinite;
+}
+
+@keyframes scaleInOut {
+  0%,100% {
+    transform: scale(1);
+  } 
+  50% {
+    transform: scale(1.4);
+  } 
 }

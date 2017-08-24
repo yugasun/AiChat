@@ -3,7 +3,6 @@ const path = require('path')
 const Koa = require('koa')
 const KoaRouter = require('koa-router')
 const KoaStatic = require('koa-static')
-const KoaSslify = require('koa-sslify')
 const IO = require('koa-socket')
 const SendChat = require('./tuling-ai')
 
@@ -11,14 +10,9 @@ const app = new Koa()
 const router = new KoaRouter()
 const io = new IO()
 
-router.get('/', async (req, res) => {
-  res.sendFile('index.html')
+router.get('/', async (ctx, next) => {
+  ctx.render('index.html')
 })
-
-// Force HTTPS on all page
-app.use(KoaSslify({
-  trustProtoHeader: true
-}))
 
 // html
 app.use(KoaStatic(path.join(__dirname, 'views')))
