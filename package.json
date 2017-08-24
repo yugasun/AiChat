@@ -13,8 +13,11 @@
   "author": "yugasun",
   "license": "MIT",
   "dependencies": {
-    "apiai": "^4.0.3",
-    "express": "^4.15.4",
+    "koa": "^2.3.0",
+    "koa-router": "^7.2.1",
+    "koa-socket": "^4.4.0",
+    "koa-sslify": "^2.1.2",
+    "koa-static": "^4.0.1",
     "request": "^2.81.0",
     "request-promise": "^4.2.1",
     "socket.io": "^2.0.3"
