@@ -1,5 +1,4 @@
 * { -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box; }
-
 html {
   height: 100%;
 }
@@ -11,20 +10,6 @@ body {
   background: #f7f7f7 url(../images/geometry.png) 0 0 no-repeat;
   background-size: cover;
   color: #333;
-}
-footer {
-  font-size: 0.75em;
-  color: silver;
-  position: fixed;
-  bottom: 1em;
-  left: 1em;
-}
-footer a {
-  color: #f80;
-}
-header {
-  margin: 2em 0;
-  text-align: center;
 }
 h1, h2, h3 {
   margin: 0;
@@ -57,15 +42,8 @@ button {
   color: #fff;
   background: linear-gradient(180deg, #39C2C9 0%, #3FC8C9 80%, #3FC8C9 100%);
   box-shadow: 2px 5px 30px rgba(63, 200, 201, .4);
-
   will-change: transform, filter;
   transition: all 0.3s ease-out;
-}
-button .fa {
-  font-size: 130px;
-  line-height: 200px;
-  margin: 0;
-  text-shadow: 1px 2px 2px #2a8b90;
 }
 button:hover {
   transform: scale(.92);
@@ -85,6 +63,28 @@ button i {
   animation: scaleInOut 2s 0s ease-in-out infinite;
 }
 
+.github-link{
+  font-size: 40px;
+  width: 0;
+  height: 0;
+  border: 50px solid transparent;
+  border-top: 50px solid #ccc;
+  border-left: 50px solid #ccc;
+  display: block;
+  opacity: .6;
+}
+.github-link:hover {
+  opacity: 1;
+}
+
+.github-link i {
+  position: absolute;
+  background: none;
+  overflow: hidden;
+  left: 10px;
+  top: 6px;
+  color: black;
+}
 @keyframes scaleInOut {
   0%,100% {
     transform: scale(1);
