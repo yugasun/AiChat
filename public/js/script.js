@@ -1,51 +1,59 @@
 'use strict'
 
+let recording = false
 const socket = window.io()
-
 const outputYou = document.querySelector('.output-you')
 const outputBot = document.querySelector('.output-bot')
-
-const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
-const recognition = new SpeechRecognition()
 
 const button = document.querySelector('button')
 const buttonIcon = button.querySelector('i')
 
-recognition.lang = 'zh-CN'
-recognition.interimResults = false
-// recognition.maxAlternatives = 1
+const constraints = {
+  audio: true,
+  video: false
+}
 
-button.addEventListener('click', () => {
-  buttonIcon.classList.remove('ion-ios-mic')
-  buttonIcon.classList.add('ion-radio-waves')
-  recognition.start()
+const audio = document.querySelector('audio')
+
+let chunks = []
+
+navigator.mediaDevices.getUserMedia(constraints)
+.then(function (stream) {
+  console.log('mediaDevices.getUserMedia() got stream: ' + stream)
+  window.stream = stream
+  const mediaRecorder = new MediaRecorder(stream)
+  button.addEventListener('click', () => {
+    if (!recording) {
+      buttonIcon.classList.remove('ion-ios-mic')
+      buttonIcon.classList.add('ion-radio-waves')
+      mediaRecorder.start()
+
+      recording = true
+    } else {
+      buttonIcon.classList.remove('ion-radio-waves')
+      buttonIcon.classList.add('ion-ios-mic')
+      console.log('rate', mediaRecorder)
+      mediaRecorder.stop()
+      recording = false
+    }
+  })
+
+  mediaRecorder.onstop = function () {
+    console.log('data available after MediaRecorder.stop() called.')
+    var voiceBuffer = new Blob(chunks, { type: 'audio/wav' })
+    chunks = []
+    var audioURL = window.URL.createObjectURL(voiceBuffer)
+    audio.setAttribute('src', audioURL)
+    socket.emit('chat message', voiceBuffer)
+    console.log('recorder stopped')
+  }
+
+  mediaRecorder.ondataavailable = function (e) {
+    chunks.push(e.data)
+  }
 })
-
-recognition.addEventListener('speechstart', () => {
-  console.log('Speech has been detected.')
-})
-
-recognition.addEventListener('result', (e) => {
-  console.log('Result has been detected.')
-
-  let last = e.results.length - 1
-  let text = e.results[last][0].transcript
-
-  outputYou.textContent = text
-  console.log('Confidence: ' + e.results[0][0].confidence)
-  socket.emit('chat message', text)
-})
-
-recognition.addEventListener('speechend', () => {
-  buttonIcon.classList.remove('ion-radio-waves')
-  buttonIcon.classList.add('ion-ios-mic')
-  recognition.stop()
-})
-
-recognition.addEventListener('error', (e) => {
-  buttonIcon.classList.remove('ion-radio-waves')
-  buttonIcon.classList.add('ion-ios-mic')
-  outputBot.textContent = 'Error: ' + e.error
+.catch(function (err) {
+  console.log('navigator.mediaDevices.getUserMedia error: ', err)
 })
 
 function synthVoice (text) {
