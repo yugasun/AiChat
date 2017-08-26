@@ -42,7 +42,6 @@ io.on('connection', (socket) => {
 
 io.on('chat message', (socket) => {
   const voiceBuffer = socket.data
-  console.log(voiceBuffer)
   // 识别本地文件，附带参数
   client.recognize(voiceBuffer, 'wav', 16000, { lan: 'zh' })
     .then(function (res) {
@@ -50,7 +49,6 @@ io.on('chat message', (socket) => {
         let text = res.result[0]
         SendChat(text)
           .then((res) => {
-            console.log(res.results[0].values.text)
             io.broadcast('bot reply', { say: text, replay: res.results[0].values.text })
           })
           .catch((err) => {
