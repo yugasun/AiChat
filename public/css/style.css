@@ -85,6 +85,23 @@ button i {
   top: 6px;
   color: black;
 }
+.ion-load-d{
+  font-size: 40px;
+}
+.ion-load-d:before{
+  
+  animation: ratation 4s 0s linear infinite;
+}
+
+@keyframes ratation {
+  0%{
+    transform: rotateZ(0DEG)
+  }
+  100% {
+    transform: rotateZ(360DEG)
+  }
+}
+
 @keyframes scaleInOut {
   0%,100% {
     transform: scale(1);

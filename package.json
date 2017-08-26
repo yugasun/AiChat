@@ -19,7 +19,6 @@
     "koa-router": "^7.2.1",
     "koa-socket": "^4.4.0",
     "koa-static": "^4.0.1",
-    "lamejs": "^1.2.0",
     "request": "^2.81.0",
     "request-promise": "^4.2.1",
     "socket.io": "^2.0.3"

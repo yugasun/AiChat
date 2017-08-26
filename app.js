@@ -1,14 +1,12 @@
 require('dotenv').config()
 
 const path = require('path')
-const fs = require('fs')
 const Koa = require('koa')
 const KoaRouter = require('koa-router')
 const KoaStatic = require('koa-static')
 const IO = require('koa-socket')
-const SendChat = require('./tuling-ai')
-const AipSpeech = require('./baidu-ai').speech
-const lamejs = require('lamejs')
+const SendChat = require('./tuling-ai') // 图灵机器人回复
+const AipSpeech = require('./baidu-ai').speech  // 百度语音识别
 
 const app = new Koa()
 const router = new KoaRouter()
@@ -44,45 +42,31 @@ io.on('connection', (socket) => {
 
 io.on('chat message', (socket) => {
   const voiceBuffer = socket.data
-  const buffer16K = encodeBuffer(voiceBuffer)
-  console.log(buffer16K)
+  console.log(voiceBuffer)
   // 识别本地文件，附带参数
-  client.recognize(buffer16K, 'wav', 16000, { lan: 'zh' })
-    .then(function (result) {
-      console.log('<recognize>: ' + JSON.stringify(result))
+  client.recognize(voiceBuffer, 'wav', 16000, { lan: 'zh' })
+    .then(function (res) {
+      if (res.err_no === 0) {
+        let text = res.result[0]
+        SendChat(text)
+          .then((res) => {
+            console.log(res.results[0].values.text)
+            io.broadcast('bot reply', { say: text, replay: res.results[0].values.text })
+          })
+          .catch((err) => {
+            console.error(err)
+          })
+      } else {
+        console.error(err)
+      }
+
     })
     .catch(function (err) {
-      console.log(err)
+      console.error(err)
     })
 
-  // SendChat(text)
-  //   .then((res) => {
-  //     console.log(res.results[0].values.text)
-  //     io.broadcast('bot reply', res.results[0].values.text)
-  //   })
-  //   .catch((err) => {
-  //     console.log(err)
-  //   })
 })
 
-function encodeBuffer (buffer) {
-  let mp3Data = []
-  let newBuffer = []
-  const mp3encoder = new lamejs.Mp3Encoder(1, 16000, 128)
-  let mp3Tmp = mp3encoder.encodeBuffer(buffer)
-  // Push encode buffer to mp3Data variable
-  mp3Data.push(mp3Tmp)
-
-  // Get end part of mp3
-  mp3Tmp = mp3encoder.flush()
-
-  // Write last data to the output data, too
-  // mp3Data contains now the complete mp3Data
-  mp3Data.push(mp3Tmp)
-
-  newBuffer.push(new Int8Array(mp3Data))
-
-  return newBuffer
-}
-
 app.listen(5000)
+
+console.log('Server is on: http://localhost:5000')

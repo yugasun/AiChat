@@ -1,6 +1,5 @@
 'use strict'
 
-let recording = false
 const socket = window.io()
 const outputYou = document.querySelector('.output-you')
 const outputBot = document.querySelector('.output-bot')
@@ -8,64 +7,80 @@ const outputBot = document.querySelector('.output-bot')
 const button = document.querySelector('button')
 const buttonIcon = button.querySelector('i')
 
-const constraints = {
-  audio: true,
-  video: false
+const audio = document.querySelector('audio')
+let recorder  // 录音器
+let recording = false   // 是否正在录音
+let recognizing = false   // 是否正在语音识别
+
+
+setState('initialize')
+
+button.addEventListener('click', () => {
+  if (recognizing) {
+    return
+  }
+  if (!recording) {
+    buttonIcon.classList.remove('ion-ios-mic')
+    buttonIcon.classList.add('ion-radio-waves')
+    H5Recorder.init(function (rec) {
+      recorder = rec
+      recorder.start()
+    })
+    
+    setState('recording')
+  } else {
+
+    let buffer = recorder.getBlob()
+
+    socket.emit('chat message', buffer)
+    setState('recognizing')
+  
+  }
+})
+ 
+/**
+ * 设置当前状态
+ * 
+ * @param {any} status 
+ */
+function setState(status) {
+  if( status === 'recording') {
+    buttonIcon.classList = ['ion-radio-waves']
+    outputYou.textContent = '录音中...'
+    outputBot.textContent = ''
+    recording = true
+    recognizing = false
+  } else if( status === 'recognizing') {
+    buttonIcon.classList = ['ion-load-d']
+    outputYou.textContent = '百度语音识别中...'
+    outputBot.textContent = '百度语音识别中...'
+    recording = false
+    recognizing = true
+  } else {
+    buttonIcon.classList = ['ion-ios-mic']
+    recording = false
+    recognizing = false
+  }
 }
 
-const audio = document.querySelector('audio')
-
-let chunks = []
-
-navigator.mediaDevices.getUserMedia(constraints)
-.then(function (stream) {
-  console.log('mediaDevices.getUserMedia() got stream: ' + stream)
-  window.stream = stream
-  const mediaRecorder = new MediaRecorder(stream)
-  button.addEventListener('click', () => {
-    if (!recording) {
-      buttonIcon.classList.remove('ion-ios-mic')
-      buttonIcon.classList.add('ion-radio-waves')
-      mediaRecorder.start()
-
-      recording = true
-    } else {
-      buttonIcon.classList.remove('ion-radio-waves')
-      buttonIcon.classList.add('ion-ios-mic')
-      console.log('rate', mediaRecorder)
-      mediaRecorder.stop()
-      recording = false
-    }
-  })
-
-  mediaRecorder.onstop = function () {
-    console.log('data available after MediaRecorder.stop() called.')
-    var voiceBuffer = new Blob(chunks, { type: 'audio/wav' })
-    chunks = []
-    var audioURL = window.URL.createObjectURL(voiceBuffer)
-    audio.setAttribute('src', audioURL)
-    socket.emit('chat message', voiceBuffer)
-    console.log('recorder stopped')
-  }
-
-  mediaRecorder.ondataavailable = function (e) {
-    chunks.push(e.data)
-  }
-})
-.catch(function (err) {
-  console.log('navigator.mediaDevices.getUserMedia error: ', err)
-})
-
-function synthVoice (text) {
+/**
+ * 朗读文字
+ * 
+ * @param {any} text 
+ */
+function synthVoice(text) {
   const synth = window.speechSynthesis
   const utterance = new SpeechSynthesisUtterance()
   utterance.text = text
   synth.speak(utterance)
 }
 
-socket.on('bot reply', function (replyText) {
-  synthVoice(replyText)
-
-  if (replyText === '') replyText = '(No answer...)'
-  outputBot.textContent = replyText
+socket.on('bot reply', function (data) {
+  console.log(data)
+  let replay = data.replay
+  synthVoice(replay)
+  outputYou.textContent = data.say
+  if (replay === '') replay = '(No answer...)'
+  outputBot.textContent = replay
+  setState('initialize')
 })
